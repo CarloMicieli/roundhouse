@@ -3,9 +3,6 @@
 /build/
 **/build/
 
-# Gradle wrapper
-gradle/wrapper/gradle-wrapper.jar
-
 # Kotlin/Java
 *.class
 *.jar
