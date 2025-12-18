@@ -1,4 +1,4 @@
-name: Checkout
+name: KMP Build and Test
 
 on:
   push:
@@ -12,3 +12,43 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Set up Java (JetBrains Runtime)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'jetbrains' # JetBrains Runtime for optimized Compose support
+          java-version: '21'        # Java 21 as requested
+          cache: 'gradle'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Grant Execute Permission for Gradlew
+        run: chmod +x gradlew
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            .gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # Compilation Check (No packaging, just verify code is valid)
+      - name: Verify Compilation
+        run: ./gradlew build -x test
+
+      # Logic Check (Run Unit Tests)
+      - name: Run Tests
+        run: ./gradlew test
+
+      # Final Build - Android
+      - name: Build Android Debug APK
+        run: ./gradlew :composeApp:assembleDebug
+
+      # Final Build - Desktop
+      - name: Build Desktop Distribution
+        run: ./gradlew :composeApp:packageDistributionForCurrentOS

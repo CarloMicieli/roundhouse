@@ -17,3 +17,13 @@
     - ci:       Changes to CI config files and scripts (pipelines as code, GH actions, etc...)
     - chore:    Other changes that don't modify src or test files
     - revert:   Reverts a previous commit
+
+## Coding Standards
+- Write idiomatic Kotlin: leverage the type system.
+- Use clear, descriptive names for variables, functions, and types.
+- Prefer `val` bindings and avoid mutable state unless necessary.
+- Use packages to organize code logically.
+- Avoid star imports (for example `import com.example.*`). Import explicitly only the symbols you need.
+- Put each Kotlin `class` or `interface` in its own file named after the type (for example `MyFeature.kt` for `class MyFeature`).
+- Ensure the `package` declaration matches the directory structure (for example `package com.example.feature` for files under `src/main/kotlin/com/example/feature`).
+- Document public items with kdoc comments.
