@@ -13,6 +13,66 @@ The ultimate companion app for scale modelers and collectors
   $ cd roundhouse
 ```
 
+Common Gradle tasks you may find useful (run from the project root):
+
+- Build everything:
+
+```bash
+./gradlew build
+```
+
+- Run unit tests:
+
+```bash
+./gradlew test
+```
+
+- Verify formatting (Spotless):
+
+```bash
+./gradlew spotlessCheck
+```
+
+- Run general verification (lint, checks, tests):
+
+```bash
+./gradlew check
+```
+
+- Android - build debug APK for the `composeApp` module:
+
+```bash
+./gradlew :composeApp:assembleDebug
+```
+
+- Android - build release APK (requires signing configuration):
+
+```bash
+./gradlew :composeApp:assembleRelease
+```
+
+- Android - install debug APK to a connected device (device required):
+
+```bash
+./gradlew :composeApp:installDebug
+```
+
+- Desktop - build a distribution for the current OS (Compose Desktop):
+
+```bash
+./gradlew :composeApp:packageDistributionForCurrentOS
+```
+
+- Desktop - run the desktop application (if configured in the module):
+
+```bash
+./gradlew :composeApp:run
+```
+
+Notes:
+- Replace `:composeApp:` with a different module path if you run tasks for other modules.
+- For Android install/run tasks you need a connected device or emulator.
+
 ## Contribution
 
 Contributions are always welcome!
