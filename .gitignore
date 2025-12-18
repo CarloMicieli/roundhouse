@@ -1,0 +1,60 @@
+# Gradle/Build
+.gradle/
+/build/
+**/build/
+
+# Gradle wrapper
+gradle/wrapper/gradle-wrapper.jar
+
+# Kotlin/Java
+*.class
+*.jar
+*.war
+*.ear
+
+# IntelliJ / Android Studio
+.idea/
+*.iml
+out/
+
+# Android
+local.properties
+/captures/
+.cxx/
+.externalNativeBuild/
+*.keystore
+
+# Kotlin Multiplatform / Kotlin/Native
+.konan/
+.konan/cache/
+*.klib
+*.kexe
+*.kotlin_module
+.kotlin_build/
+
+# JavaScript / Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dist/
+build/js/
+
+# Xcode / iOS
+*.xcworkspace
+xcuserdata/
+*.xcuserstate
+DerivedData/
+Pods/
+Podfile.lock
+
+# CocoaPods
+Pods/
+
+# Misc
+.DS_Store
+.env
+.idea/libraries
+.idea/modules.xml
+.idea/workspace.xml
+/.gradle
