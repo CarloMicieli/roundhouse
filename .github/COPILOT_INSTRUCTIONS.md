@@ -1,6 +1,7 @@
 # GitHub Copilot Instructions
 
 ## General instructions
+- When working on tasks, check the documentation in the `docs/` folder and update it if your change affects behavior or usage.
 - Ask for confirmation before cancelling or removing any existing code, unless explicitely requested
 
 ## Commits
