@@ -10,6 +10,19 @@ plugins {
     alias(libs.plugins.kotlinxSerialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
+    alias(libs.plugins.spotless)
+}
+
+spotless {
+    kotlin {
+        target("**/*.kt")
+        ktlint("1.8.0")
+        licenseHeaderFile("${project.rootDir}/.spotless/HEADER.txt")
+    }
+    kotlinGradle {
+        target("**/*.gradle.kts")
+        ktlint("1.8.0")
+    }
 }
 
 tasks.withType<AbstractTestTask> {
@@ -34,9 +47,9 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_21)
         }
     }
-    
+
     jvm()
-    
+
     sourceSets {
         androidMain.dependencies {
             implementation(compose.preview)
@@ -78,12 +91,21 @@ room {
 
 android {
     namespace = "io.github.carlomicieli.roundhouse"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    compileSdk =
+        libs.versions.android.compileSdk
+            .get()
+            .toInt()
 
     defaultConfig {
         applicationId = "io.github.carlomicieli.roundhouse"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
+        minSdk =
+            libs.versions.android.minSdk
+                .get()
+                .toInt()
+        targetSdk =
+            libs.versions.android.targetSdk
+                .get()
+                .toInt()
         versionCode = 1
         versionName = "1.0"
     }

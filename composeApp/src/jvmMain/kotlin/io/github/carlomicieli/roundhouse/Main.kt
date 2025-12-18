@@ -20,8 +20,15 @@
  */
 package io.github.carlomicieli.roundhouse
 
-class Greeting {
-    private val platform = getPlatform()
+import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.application
 
-    fun greet(): String = "Hello, ${platform.name}!"
-}
+fun main() =
+    application {
+        Window(
+            onCloseRequest = ::exitApplication,
+            title = "Roundhouse",
+        ) {
+            App()
+        }
+    }
