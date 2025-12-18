@@ -20,54 +20,52 @@
  */
 package io.github.carlomicieli.roundhouse
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import io.github.carlomicieli.roundhouse.app.navigation.AppNavHost
+import io.github.carlomicieli.roundhouse.app.navigation.Route
+import io.github.carlomicieli.roundhouse.app.ui.AppTopBar
+import io.github.carlomicieli.roundhouse.app.ui.BottomNavigationBar
 import io.github.carlomicieli.roundhouse.theme.AppTheme
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import roundhouse.composeapp.generated.resources.Res
-import roundhouse.composeapp.generated.resources.compose_multiplatform
 
 @Composable
 @Preview
 fun App() {
     AppTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(
+        val navController = rememberNavController()
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = Route.fromRoute(navBackStackEntry?.destination?.route)
+
+        Scaffold(
             modifier =
                 Modifier
                     .background(MaterialTheme.colorScheme.primaryContainer)
                     .safeContentPadding()
                     .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
-            }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
+            topBar = { AppTopBar(currentRoute) { /* TODO: handle overflow */ } },
+            bottomBar = {
+                BottomNavigationBar(currentRoute) { route ->
+                    // navigate with single top to avoid multiple copies
+                    navController.navigate(route.route) {
+                        launchSingleTop = true
+                    }
                 }
+            },
+        ) { innerPadding ->
+            // NavHost content — apply inner padding
+            Box(modifier = Modifier.padding(innerPadding)) {
+                AppNavHost(navController = navController, startDestination = Route.Home)
             }
         }
     }
