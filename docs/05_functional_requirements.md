@@ -66,6 +66,14 @@ Roundhouse manages:
 - Export collections and wish lists to CSV/JSON
 - Optional CSV import for models in v1
 
+### Persistent User Settings
+
+- Provide a personalized experience by remembering user preferences such as currency, measurement system, default gauge filter, theme mode, and sync settings.
+- Use Jetpack DataStore for key-value persistence, ensuring asynchronous and reactive updates.
+- Implement platform-specific storage paths for Android and Desktop to maintain consistency and reliability.
+- Ensure type safety by exposing settings as Enums in the Repository layer, while storing raw data as Strings in DataStore.
+- Support instant saving of settings to prevent data loss and ensure session continuity.
+
 ## Non-Functional Requirements
 
 Performance
