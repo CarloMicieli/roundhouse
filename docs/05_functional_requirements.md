@@ -75,18 +75,38 @@ Roundhouse manages:
 - Support instant saving of settings to prevent data loss and ensure session continuity.
 
 
+
 ## Testing Strategy
 
-Roundhouse employs a comprehensive testing strategy to ensure reliability, maintainability, and high-quality user experience:
+Roundhouse uses a pragmatic, production-grade testing and architectural plan to ensure deterministic behavior, strict boundaries, and high regression confidence across Android and Desktop (JVM):
 
-- **Unit Testing:** All domain and repository logic is covered by unit tests, focusing on edge cases such as empty collections, large datasets, and database migrations.
-- **UI Snapshot Testing:** Critical screens are validated with snapshot tests across light/dark themes and multiple device sizes to catch regressions and visual inconsistencies.
-- **Integration Testing:** Import/export, data migration, and backup/restore flows are verified with integration tests to ensure end-to-end correctness.
-- **Accessibility & Contrast Audits:** Automated checks for color contrast and accessibility are included in CI pipelines where feasible.
-- **Continuous Integration:** Static analysis, linting (Kotlin/Compose linters, detekt), and automated test suites are required to pass for all release branches.
-- **Manual QA:** Key user flows are manually tested on supported platforms before major releases.
+### 1. Domain-Specific Logic (commonTest-first)
+- All business rules (scale conversion, inventory valuation, collection filtering) are implemented as pure Kotlin in :core:domain, free of platform dependencies.
+- Tests are written in commonTest using kotlin.test + JUnit, with table-driven and precision-verified scenarios for conversions, valuation, and filtering.
+- These tests run identically on Android and Desktop JVM.
 
-Test coverage and results are tracked as part of the release process, and new features must include appropriate tests before merging.
+### 2. Room & Persistence
+- Room DAOs/entities are internal to :core:database and exposed only via interfaces.
+- DAO and repository tests use in-memory Room databases (Room.inMemoryDatabaseBuilder) in jvmTest, verifying CRUD, constraints, transactions, and bulk import integrity.
+- Export/import logic (JSON/CSV) is tested in commonTest with round-trip and in-memory DB scenarios.
+
+### 3. Architectural Enforcement
+- Strict unidirectional data flow: UI → ViewModel → UseCase → Repository → DAO. UI never sees Room.
+- Architecture tests (JVM) verify module boundaries (e.g., :feature:* does not depend on :core:database).
+
+### 4. Platform-Specific UI Testing
+- Android: Compose UI Test and emulator-based CI, with snapshot tests for phone/tablet/landscape using WindowSizeClass.
+- Desktop: JVM UI tests (runComposeUiTest) for desktop-specific interactions (right-click, keyboard shortcuts, window resizing).
+
+### 5. Regression Confidence (CI/CD)
+- GitHub Actions matrix builds run all tests on Android and Desktop (Linux, Windows, macOS).
+- Pipeline stages: static checks, common/jvm/Android/desktop tests, emulator and headless runs.
+- Screenshot testing (e.g., Paparazzi/Showkase) in CI to catch UI regressions.
+
+### Key Benefits
+- Same domain tests across platforms, JVM-based Room tests reused, platform UI differences caught early, and strong architectural guarantees.
+
+All new features require appropriate tests before merging. This strategy ensures deterministic, maintainable, and high-quality releases for collectors on all supported platforms.
 
 ## Non-Functional Requirements
 
