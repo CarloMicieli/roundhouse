@@ -74,6 +74,20 @@ Roundhouse manages:
 - Ensure type safety by exposing settings as Enums in the Repository layer, while storing raw data as Strings in DataStore.
 - Support instant saving of settings to prevent data loss and ensure session continuity.
 
+
+## Testing Strategy
+
+Roundhouse employs a comprehensive testing strategy to ensure reliability, maintainability, and high-quality user experience:
+
+- **Unit Testing:** All domain and repository logic is covered by unit tests, focusing on edge cases such as empty collections, large datasets, and database migrations.
+- **UI Snapshot Testing:** Critical screens are validated with snapshot tests across light/dark themes and multiple device sizes to catch regressions and visual inconsistencies.
+- **Integration Testing:** Import/export, data migration, and backup/restore flows are verified with integration tests to ensure end-to-end correctness.
+- **Accessibility & Contrast Audits:** Automated checks for color contrast and accessibility are included in CI pipelines where feasible.
+- **Continuous Integration:** Static analysis, linting (Kotlin/Compose linters, detekt), and automated test suites are required to pass for all release branches.
+- **Manual QA:** Key user flows are manually tested on supported platforms before major releases.
+
+Test coverage and results are tracked as part of the release process, and new features must include appropriate tests before merging.
+
 ## Non-Functional Requirements
 
 Performance
