@@ -61,10 +61,28 @@ Roundhouse manages:
 - Maintenance Card per owned unit: status, last/next date, decoder details
 - Maintenance events (cleaning, inspection, lubrication, repair, upgrade)
 
-### Import/Export
+### Google Drive Backup & Restore
 
-- Export collections and wish lists to CSV/JSON
-- Optional CSV import for models in v1
+- The app provides a robust backup and restore system for the local Room database and user images, supporting both Android and Desktop (JVM).
+- Backups are bundled as compressed archives (e.g., .zip) containing the database files (.db, .db-shm, .db-wal) and images directory.
+- Backups are stored in the user's Google Drive appDataFolder (hidden, not user-accessible) using the Google Drive REST API.
+- Each backup includes schema version and timestamp metadata for safe restoration and migration.
+- On cold start, if the local database is empty, the app checks Google Drive for available backups and offers restoration if compatible.
+- Version checks ensure only compatible backups are restored; users are prompted to update the app if a backup is from a newer version.
+- The restore process is atomic: all database files are replaced after closing Room connections, and Room migrations are run as needed.
+- Users can configure backup frequency (Manual, Daily, Weekly). Android uses WorkManager; Desktop runs sync on startup or via coroutine.
+
+#### Security Requirements
+- OAuth2 with PKCE is used for authentication; only the drive.appdata scope is requested for least privilege.
+- Tokens are stored securely: EncryptedSharedPreferences (Android) or native system vault (Desktop).
+- Local database uses SQLCipher for encryption; backup archives are encrypted before upload using hardware-backed keys.
+- All network traffic uses TLS 1.3; SHA-256 integrity checks are performed after download.
+- Quota and network errors are handled with user notifications and retry logic.
+
+#### Implementation Notes
+- Uses Ktor for networking, Room KMP for database, and multiplatform settings for secure storage.
+- Never use .fallbackToDestructiveMigration() in production; all migrations must be explicit.
+- Backup and restore flows are user-facing, with clear warnings and options to merge or overwrite data.
 
 ### Persistent User Settings
 
@@ -73,8 +91,6 @@ Roundhouse manages:
 - Implement platform-specific storage paths for Android and Desktop to maintain consistency and reliability.
 - Ensure type safety by exposing settings as Enums in the Repository layer, while storing raw data as Strings in DataStore.
 - Support instant saving of settings to prevent data loss and ensure session continuity.
-
-
 
 ## Testing Strategy
 
@@ -150,22 +166,24 @@ Internationalization & Localization
 - Use ICU-style formatting for dates, numbers, currencies, and pluralization.
 - Ensure layouts accommodate long translations and right-to-left (RTL) where applicable.
 
+
 Scalability & Extensibility
 - Design data models and UI lists with pagination/virtualization to handle large collections beyond initial targets.
 - Provide clear extension points for future features (sync providers, cloud backup, plugin-like exporters/importers).
 
+
 Testing & QA
 - Unit tests for domain and repository logic covering edge cases (empty collections, large data sets, DB migrations).
 - UI snapshot tests for critical screens in light/dark themes and multiple sizes.
-- Integration tests for import/export, data migration, and backup/restore flows.
+- Integration tests for data migration and backup/restore flows.
 - Add automated contrast checks and accessibility audits in CI where feasible.
 
 Observability & Logging
 - Maintain structured, leveled logging for debugging and QA (INFO/WARN/ERROR) with toggles for verbose logs in debug builds only.
 - Provide a simple app diagnostics export (logs + DB metadata + version) to help triage user issues without exfiltrating private data.
 
-Backup, Export & Recovery
-- Support export/import of collections and wish lists to JSON/CSV (already specified); ensure exports include schema/version metadata for reliable imports.
+
+Backup & Recovery
 - Provide a clear user-facing backup and restore flow with warnings on overwriting data and options to merge where sensible.
 
 Deployment & Packaging
